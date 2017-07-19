@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 public class RobotConnection {
     public static final int K_ROBOT_PORT = 8254;
     public static final String K_ROBOT_PROXY_HOST = "localhost";
-    public static final int K_CONNECTOR_SLEEP_MS = 100;
+    public static final int K_CONNECTOR_SLEEP_MS = 0;
     public static final int K_THRESHOLD_HEARTBEAT = 800;
     public static final int K_SEND_HEARTBEAT_PERIOD = 100;
 
@@ -91,7 +91,7 @@ public class RobotConnection {
                         Log.e("ReadThread", "Could not get input stream");
                         continue;
                     } catch (NullPointerException npe) {
-                        Log.e("ReadThread", "socket was null");
+                        //Log.e("ReadThread", "socket was null");
                         continue;
                     }
                     String jsonMessage = null;
@@ -121,9 +121,21 @@ public class RobotConnection {
         public void run() {
             while (m_running) {
                 try {
-                    if (m_socket == null || !m_socket.isConnected() && !m_connected) {
+                    boolean other = false;
+                    try {
+                        if (m_socket != null) {
+                            other = !m_socket.isConnected() && !m_connected;
+                        }
+                    }catch(NullPointerException npe){
+                        // do nothing, assume other failure.
+                    }
+                    if (m_socket == null || other) {
                         tryConnect();
-                        Thread.sleep(250, 0);
+                        int count = 0;
+                        while(count <= 250 && (m_socket == null || !m_socket.isConnected() && !m_connected)) {
+                            Thread.sleep(1, 0);
+                            count++;
+                        }
                     }
 
                     long now = System.currentTimeMillis();

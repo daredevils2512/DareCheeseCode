@@ -27,7 +27,7 @@ public class VisionTrackerGLSurfaceView extends BetterCameraGLSurfaceView implem
 
     static final String LOGTAG = "VTGLSurfaceView";
     protected int procMode = NativePart.DISP_MODE_TARGETS_PLUS;
-    public static final String[] PROC_MODE_NAMES = new String[]{"Raw image", "Threshholded image", "Targets", "Targets plus"};
+    public static final String[] PROC_MODE_NAMES = new String[]{"Raw", "Threshholded", "Targets", "Targets+"};
     protected int frameCounter;
     protected long lastNanoTime;
     TextView mFpsText = null;

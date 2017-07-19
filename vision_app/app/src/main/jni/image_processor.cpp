@@ -95,7 +95,7 @@ std::vector<TargetInfo> processImpl(int w, int h, int texOut, DisplayMode mode,
       target.height = max_y - min_y;
       target.points = poly;
 
-      // Filter based on size
+      /*// Filter based on size
       // Keep in mind width/height are in imager terms...
       const double kMinTargetWidth = 20;
       const double kMaxTargetWidth = 300;
@@ -148,7 +148,7 @@ std::vector<TargetInfo> processImpl(int w, int h, int texOut, DisplayMode mode,
         LOGD("Rejected target due to fullness");
         rejected_targets.push_back(std::move(target));
         continue;
-      }
+      }*/
 
       // We found a target
       LOGD("Found target at %.2lf, %.2lf...size %.2lf, %.2lf",
@@ -227,7 +227,7 @@ extern "C" void processFrame(JNIEnv *env, int tex1, int tex2, int w, int h,
                              jobject destTargetInfo) {
   auto targets = processImpl(w, h, tex2, static_cast<DisplayMode>(mode), h_min,
                              h_max, s_min, s_max, v_min, v_max);
-  int numTargets = targets.size();
+  int numTargets = std::min((int)targets.size(),3);
   ensureJniRegistered(env);
   env->SetIntField(destTargetInfo, sNumTargetsField, numTargets);
   if (numTargets == 0) {
@@ -235,7 +235,7 @@ extern "C" void processFrame(JNIEnv *env, int tex1, int tex2, int w, int h,
   }
   jobjectArray targetsArray = static_cast<jobjectArray>(
       env->GetObjectField(destTargetInfo, sTargetsField));
-  for (int i = 0; i < std::min(numTargets, 3); ++i) {
+  for (int i = 0; i < numTargets; ++i) {
     jobject targetObject = env->GetObjectArrayElement(targetsArray, i);
     const auto &target = targets[i];
     env->SetDoubleField(targetObject, sCentroidXField, target.centroid_x);
