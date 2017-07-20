@@ -36,8 +36,8 @@ public class VisionTrackerGLSurfaceView extends BetterCameraGLSurfaceView implem
 
     static final int kHeight = 480;
     static final int kWidth = 640;
-    static final double kCenterCol = ((double) kWidth) / 2.0 - .5;
-    static final double kCenterRow = ((double) kHeight) / 2.0 - .5;
+    static final double kCenterCol = ((double) kWidth) / 2.0;
+    static final double kCenterRow = ((double) kHeight) / 2.0;
 
     static BetterCamera2Renderer.Settings getCameraSettings() {
         BetterCamera2Renderer.Settings settings = new BetterCamera2Renderer.Settings();
@@ -47,7 +47,7 @@ public class VisionTrackerGLSurfaceView extends BetterCameraGLSurfaceView implem
         settings.camera_settings.put(CaptureRequest.CONTROL_MODE, CaptureRequest.CONTROL_MODE_OFF);
         settings.camera_settings.put(CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE, CaptureRequest.CONTROL_VIDEO_STABILIZATION_MODE_OFF);
         settings.camera_settings.put(CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE, CaptureRequest.LENS_OPTICAL_STABILIZATION_MODE_OFF);
-        settings.camera_settings.put(CaptureRequest.SENSOR_EXPOSURE_TIME, 1000000L);
+        settings.camera_settings.put(CaptureRequest.SENSOR_EXPOSURE_TIME, 2000000L);
         settings.camera_settings.put(CaptureRequest.LENS_FOCUS_DISTANCE, .2f);
         return settings;
     }
@@ -137,8 +137,10 @@ public class VisionTrackerGLSurfaceView extends BetterCameraGLSurfaceView implem
             NativePart.TargetsInfo.Target target = targetsInfo.targets[i];
 
             // Convert to a homogeneous 3d vector with x = 1
-            double y = -(target.centroidX - kCenterCol) / getFocalLengthPixels();
-            double z = (target.centroidY - kCenterRow) / getFocalLengthPixels();
+            //double y = -(target.centroidX - kCenterCol) / getFocalLengthPixels();
+            //double z = (target.centroidY - kCenterRow) / getFocalLengthPixels();
+            double y = (320.0/480.0) * target.centroidY;
+            double z = target.centroidX;
             Log.i(LOGTAG, "Target at: " + y + ", " + z);
             visionUpdate.addCameraTargetInfo(
                     new CameraTargetInfo(y, z));
